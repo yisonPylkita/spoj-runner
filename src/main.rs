@@ -10,7 +10,22 @@
 ///   boring manual testing by running given tests and shows 
 ///   tests status in nicely formatted way.
 
+use std::fs;
+use std::env;
 
 fn main() {
-    println!("Hello, world!");
+    let mut tests_dir = env::current_dir().unwrap();
+    tests_dir.push("tests");
+    let tests = fs::read_dir(tests_dir).unwrap();
+    for test in tests {
+        let test = test.unwrap();
+        if !test.file_type().unwrap().is_dir() {
+            println!("{:?} is not a directory - skipping", test.path());
+            continue;
+        }
+
+        for test_file in fs::read_dir(test.path()).unwrap() {
+            println!("{}", test_file.unwrap().path().to_str().unwrap());
+        }
+    }
 }
